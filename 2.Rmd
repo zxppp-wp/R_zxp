@@ -1,0 +1,115 @@
+---
+title: "Untitled"
+author: "zhaoxiuping"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+  html_document: default
+---
+Get a subset with STATE_CODE 6 and SHRP_ID starting with 050:
+
+```{r }
+library("dplyr")
+library("ggplot2")
+library("tidyr")
+data2 <- read.csv("/Users/zhaoxiuping/My R/data-assignment/LTPP/iri.csv")
+attach(data2)
+data2
+```
+
+
+```{r }
+subset_data <- data2 |>
+  subset(stringr::str_detect(SHRP_ID,"050") & STATE_CODE==6)
+subset_data
+```
+
+Obtain the summary statistics of IRI of each section: min, max, and mean:
+
+```{r }
+subset_data2 <- data2 |>
+  group_by(STATE_CODE,SHRP_ID) |>
+  summarise(
+    observation = n(),
+    # 填补缺失值
+    iri_max = max(IRI,na.rm = TRUE),
+    iri_min = min(IRI,na.rm = TRUE),
+    iri_median = median(IRI,na.rm = TRUE),
+    iri_mean = mean(IRI,na.rm = TRUE)
+  ) |>
+ungroup()
+subset_data2
+```
+Sort the summarized data by the averaged IRI in a descending order (report results for one section only):
+
+```{r }
+subset_data3 <- arrange(subset_data2,desc(iri_mean))
+subset_data3
+```
+
+Generate a scatter plot for the averaged IRI against the time for a selected section, and then give your interpretation of the plot: • HINT1:meanIRIvs.date
+• HINT2:STATE_CODEandSHRP_IDtogethertoformaprimarykeythatuniquelyidentifiesasection
+``` {r }
+subset_data4 <- data2 |>
+  group_by(STATE_CODE,SHRP_ID) |>
+  summarise(
+    observation = n(),
+    iri_mean = mean(IRI,na.rm = TRUE),
+    DATE = max(VISIT_DATE,na.rm = TRUE)
+  ) |>
+ungroup()
+subset_data4
+p <- ggplot(data = subset_data4, aes(x = DATE, y = iri_mean)) +
+  geom_point() +
+  labs(title = "IRI vs. VISIT_DATE",
+       x = "DATE",
+       y = "IRI_mean") +
+  theme_minimal()
+
+# 显示散点图
+print(p)
+
+```
+Get the intersection of the datasets accident and person:
+
+```{r }
+accident <- data.frame(read.csv("/Users/zhaoxiuping/My R/data-assignment/CRSS/ACCIDENT.csv"))
+person <- data.frame(read.csv("/Users/zhaoxiuping/My R/data-assignment/CRSS/PERSON.csv"))
+inter <- intersect(colnames(accident),colnames(person))
+
+inter_ap <- inner_join(
+  x=accident,
+  y=person,
+  by = inter
+)
+```
+
+Tabulate the total number of observations in each injury severity (INJ_SEV)
+• HINT:usesummarise()andgroup_by()
+
+```{r }
+observations_injury_severity  <- inter_ap |>
+  group_by(INJ_SEV) |>
+  summarise(
+    count = n()
+  )
+```
+Merge the accident dataset with the vehicle dataset, and report the dimension of your results and number of missing values in one variable of the right dataset
+• HINT:left_join()
+
+
+```{r }
+vehicle <- read.csv("/Users/zhaoxiuping/My R/data-assignment/CRSS/VEHICLE.csv")
+inter_2 <- intersect(colnames(accident),colnames(vehicle))
+left_av <- left_join(
+  x=accident,
+  y=vehicle,
+  # by = c("CASENUM","PSU")
+  by = inter_2
+) |>
+  distinct()
+missing_ALCOHOL <- sum(is.na(left_av$MAX_SEV.y))
+print(missing_ALCOHOL)
+
+dim(left_av)
+```
