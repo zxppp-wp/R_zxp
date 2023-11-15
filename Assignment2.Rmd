@@ -81,7 +81,7 @@ data <- data.frame(
   STATE_CODE = subset_data5$STATE_CODE,
   SHRP_ID = subset_data5$SHRP_ID
 )
-library("ggplot2")
+
 scatter_plot <- ggplot(data, aes(x = VISIT_DATE, y = IRI_MEAN)) +
   geom_point(aes(color = paste(STATE_CODE, SHRP_ID)), size = 2) +
   labs(x = "Date", y = "Average IRI", title = "Scatter Plot of meanIRIvs.date") +
