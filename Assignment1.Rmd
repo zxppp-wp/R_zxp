@@ -17,6 +17,9 @@ knitr::opts_chunk$set(echo = TRUE)
 Load your own . csv file into R, report the dimension of your data frame, then generate a scatter plot using the plot() function:
 
 ```{r dataframe}
+library("dplyr")
+library("ggplot2")
+library("tidyr")
 data1 <- read.csv("/Users/zhaoxiuping/R_zxp/datawork_1.csv")
 attach(data1)
 df <- data.frame(data1)
