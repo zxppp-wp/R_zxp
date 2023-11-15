@@ -8,11 +8,6 @@ output:
     df_print: paged
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
 
 Load your own . csv file into R, report the dimension of your data frame, then generate a scatter plot using the plot() function:
 
