@@ -1,0 +1,47 @@
+---
+title: "Assignment1"
+author: "zhaoxiuping"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Load your own . csv file into R, report the dimension of your data frame, then generate a scatter plot using the plot() function:
+
+```{r dataframe}
+data1 <- read.csv("/Users/zhaoxiuping/R_zxp/datawork_1.csv")
+attach(data1)
+df <- data.frame(data1)
+df
+```
+
+```{r scatter plot}
+par(mai=c(0.6,0.6,0.4,0.4),cex=0.7,cex.main=1,font.main=1)
+plot(df$R,df$python,main="scatter plot")
+```
+
+
+
+Write a loop to calculate the mean value of a random numeric vector oflength 50:
+
+```{r avg}
+sum <- 0
+x<- rnorm(50)
+#循环求均值
+for(i in 1:50){
+  sum = sum +x[i]
+}
+avg <- sum/50
+avg
+#函数求均值验证
+avg1 <- mean(x)
+avg
+```
